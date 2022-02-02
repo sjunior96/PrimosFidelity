@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Dimensions, StyleSheet, Modal, ActivityIn
 import firebase from '../../Services/firebaseConnection';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Animated from 'react-native-reanimated';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 const { width, height } = Dimensions.get('window');
 
@@ -10,6 +11,7 @@ export default function Home() {
     const [user, setUser] = useState([]);
     const [stamps, setStamps] = useState([]);
     const [modalLoadingVisible, setModalLoadingVisible] = useState(true);
+    const [alertVisible, setAlertVisible] = useState(false);
 
     function openSelectedProfile() {
         let newStamps = [];
@@ -25,6 +27,26 @@ export default function Home() {
         //alert(JSON.stringify(stamps));
     }
 
+    async function removeGift(userKey) {
+        let newGiftsQuantity = user.giftsQuantity - 1;
+        firebase.database().ref('users').child(userKey).update({
+            giftsQuantity: newGiftsQuantity,
+            hasGiftRemovalRequest: "false"
+        })
+            .then((success) => {
+                alert("Brinde resgatado com sucesso!");
+            });
+    }
+
+    async function removeGiftRemovalRequest(userKey) {
+        firebase.database().ref("users").child(userKey).update({
+            hasGiftRemovalRequest: "false"
+        })
+            .then((success) => {
+                alert("Resgate do brinde cancelado com sucesso!");
+            });
+    }
+
     function getUser() {
         let uid = firebase.auth().currentUser.uid;
         firebase.database().ref('users').child(uid).on('value', (snapshot) => {
@@ -32,10 +54,12 @@ export default function Home() {
                 key: uid,
                 email: snapshot.val().email,
                 name: snapshot.val().name,
+                hasGiftRemovalRequest: snapshot.val().hasGiftRemovalRequest,
                 giftsQuantity: snapshot.val().giftsQuantity,
                 stampsQuantity: snapshot.val().stampsQuantity,
                 clientType: snapshot.val().clientType
             };
+            setAlertVisible(snapshot.val().hasGiftRemovalRequest === "true" ? true : false);
             setUser(list);
             setModalLoadingVisible(false);
         });
@@ -114,6 +138,35 @@ export default function Home() {
                     <ActivityIndicator size="large" color="#FFF" />
                 </View>
             </Modal>
+
+            <AwesomeAlert
+                show={alertVisible}
+                showProgress={false}
+                title="Atenção"
+                message={"A loja está tentando dar baixa em um brinde de sua conta, confirme se você está fazendo uso do seu brinde!"}
+                closeOnTouchOutside={true}
+                closeOnHardwareBackPress={false}
+                showConfirmButton={true}
+                showCancelButton={true}
+                cancelText="Cancelar"
+                confirmText="Resgatar"
+                confirmButtonColor="#DD6B55"
+                cancelButtonColor="#000"
+                onConfirmPressed={() => {
+                    removeGift(user.key);
+                    setAlertVisible(false);
+                }}
+                onCancelPressed={() => {
+                    removeGiftRemovalRequest(user.key);
+                    setAlertVisible(false);
+                }}
+                cancelButtonStyle={{ width: 100, height: 50, justifyContent: "center", alignItems: "center" }}
+                confirmButtonStyle={{ width: 100, height: 50, justifyContent: "center", alignItems: "center" }}
+                confirmButtonTextStyle={{ fontSize: 18 }}
+                cancelButtonTextStyle={{ fontSize: 18 }}
+                titleStyle={{ fontSize: 22 }}
+                messageStyle={{ fontSize: 18 }}
+            />
         </View>
     );
 }

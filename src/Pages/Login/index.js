@@ -38,7 +38,7 @@ export default function Login() {
         firebase.auth().sendPasswordResetEmail(email)
             .then((success) => {
                 showToastWithGravity("Email de redefinição enviado!");
-            })
+            });
     }
 
     async function loginUser() {
@@ -61,6 +61,7 @@ export default function Login() {
                     firebase.database().ref("users").child(uid).set({
                         email: email,
                         name: name,
+                        hasGiftRemovalRequest: "false",
                         giftsQuantity: 0,
                         stampsQuantity: 0,
                         clientType: "Cliente"
@@ -68,7 +69,7 @@ export default function Login() {
                         .catch((error) => {
                             alert(error.code);
                         });
-                })
+                });
         }
         else {
             showToastWithGravity("Preencha todos os campos!");
@@ -91,7 +92,7 @@ export default function Login() {
                 useNativeDriver: false
             })
         ]).start();
-    }, [])
+    }, []);
 
     function keyboardDidShow() {
         Animated.parallel([
@@ -163,20 +164,20 @@ export default function Login() {
                             style={styles.input}
                             placeholder="Email"
                             autoCorrect={false}
-                            onChangeText={(email) => { setEmail(email) }}
+                            onChangeText={(email) => { setEmail(email); }}
                         />
 
                         <TextInput
                             style={styles.input}
                             placeholder="Senha"
                             autoCorrect={false}
-                            onChangeText={(password) => { setPassword(password) }}
+                            onChangeText={(password) => { setPassword(password); }}
                             secureTextEntry={true}
                         />
 
                         <TouchableOpacity
                             style={styles.btnSubmit}
-                            onPress={() => { loginUser() }}
+                            onPress={() => { loginUser(); }}
                         >
                             <Text style={styles.submitText}>Entrar</Text>
                         </TouchableOpacity>
@@ -190,27 +191,27 @@ export default function Login() {
                             style={styles.input}
                             placeholder="Nome"
                             autoCorrect={false}
-                            onChangeText={(name) => { setName(name) }}
+                            onChangeText={(name) => { setName(name); }}
                         />
 
                         <TextInput
                             style={styles.input}
                             placeholder="Email"
                             autoCorrect={false}
-                            onChangeText={(email) => { setEmail(email) }}
+                            onChangeText={(email) => { setEmail(email); }}
                         />
 
                         <TextInput
                             style={styles.input}
                             placeholder="Senha"
                             autoCorrect={false}
-                            onChangeText={(password) => { setPassword(password) }}
+                            onChangeText={(password) => { setPassword(password); }}
                             secureTextEntry={true}
                         />
 
                         <TouchableOpacity
                             style={styles.btnSubmit}
-                            onPress={() => { registerUser() }}
+                            onPress={() => { registerUser(); }}
                         >
                             <Text style={styles.submitText}>Registrar</Text>
                         </TouchableOpacity>
@@ -223,10 +224,10 @@ export default function Login() {
                             style={styles.input}
                             placeholder="Email"
                             autoCorrect={false}
-                            onChangeText={(email) => { setEmail(email) }}
+                            onChangeText={(email) => { setEmail(email); }}
                         />
 
-                        <TouchableOpacity style={styles.btnSubmit} onPress={() => { resetPassword() }}>
+                        <TouchableOpacity style={styles.btnSubmit} onPress={() => { resetPassword(); }}>
                             <Text style={styles.submitText}>Enviar email</Text>
                         </TouchableOpacity>
                     </View>
@@ -285,4 +286,4 @@ const styles = StyleSheet.create({
     }
 
 
-})
+});

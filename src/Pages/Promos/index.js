@@ -90,7 +90,7 @@ export default function Promos() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.promosTitle}>Serviços</Text>
+            <Text style={styles.promosTitle}>Catálogo de Serviços</Text>
             <View style={{ width: '90%', height: 60, alignItems: "center", justifyContent: "center", flexDirection: "row", borderWidth: 1, borderRadius: 7.5, paddingLeft: 10, marginBottom: 25 }}>
                 <View style={{ width: '70%' }}>
                     <TextInput value={searchTextPromo} placeholder="Buscar Promoção..." style={{ fontSize: 18 }} onChangeText={(searchTextPromo) => { setSearchTextPromo(searchTextPromo); }}></TextInput>
